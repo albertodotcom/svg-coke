@@ -3,11 +3,25 @@ package transform
 import (
 	"log"
 	"net/textproto"
+	"reflect"
 	"testing"
 	"text/template"
 )
 
-func Test_InjectStringIntoTemaple(t *testing.T) {
+func Test_OpenTemplate(t *testing.T) {
+	result := openTemplate()
+
+	expectedType := "*template.Template"
+
+	if reflect.TypeOf(result).String() != expectedType {
+		t.Logf("expected result to be of type \"%s\", but found type \"%s\"", expectedType, reflect.TypeOf(result))
+		t.Fail()
+	}
+}
+
+func Test_InjectIconIntoTemaple(t *testing.T) {
+	log.Println("hello")
+
 	const svgTemplateContainer = `
   <svg>
     <defs>
@@ -19,7 +33,7 @@ func Test_InjectStringIntoTemaple(t *testing.T) {
 
 	tmpl, _ := template.New("svgSpriteTemplate").Parse(textproto.TrimString(svgTemplateContainer))
 
-	resultByte := injectStringIntoTemplate(stringToBeInjected, tmpl)
+	resultByte := injectIconsIntoSvgTemplate(stringToBeInjected, tmpl)
 	result := resultByte.String()
 
 	log.Printf("result: %#+v\n", result)

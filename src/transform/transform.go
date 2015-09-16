@@ -5,12 +5,24 @@ import (
 	"text/template"
 )
 
+const svgSpriteTemplate = "../../svgSpriteTemplate.svg"
+
+func openTemplate() *template.Template {
+	tmpl, err := template.New("svgSpriteTemplate").ParseFiles(svgSpriteTemplate)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return tmpl
+}
+
 type templateContext struct {
 	StringToInject string
 }
 
-func injectStringIntoTemplate(stringToInject string, tmpl *template.Template) bytes.Buffer {
-	tc := templateContext{stringToInject}
+func injectIconsIntoSvgTemplate(icons string, tmpl *template.Template) bytes.Buffer {
+	tc := templateContext{icons}
 
 	var output bytes.Buffer
 	tmpl.Execute(&output, tc)
