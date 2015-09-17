@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-func Test_OpenTemplate(t *testing.T) {
+func TestOpenTemplate(t *testing.T) {
 	result := openTemplate()
 
 	expectedType := "*template.Template"
@@ -19,13 +19,13 @@ func Test_OpenTemplate(t *testing.T) {
 	}
 }
 
-func Test_InjectIconIntoTemaple(t *testing.T) {
+func TestInjectIconIntoTemaple(t *testing.T) {
 	log.Println("hello")
 
 	const svgTemplateContainer = `
   <svg>
     <defs>
-      {{.StringToInject}}
+      {{.Icons}}
     <defs>
   </svg>`
 

@@ -17,12 +17,12 @@ func openTemplate() *template.Template {
 	return tmpl
 }
 
-type templateContext struct {
-	StringToInject string
-}
-
 func injectIconsIntoSvgTemplate(icons string, tmpl *template.Template) bytes.Buffer {
-	tc := templateContext{icons}
+	tc := struct {
+		Icons string
+	}{
+		icons,
+	}
 
 	var output bytes.Buffer
 	tmpl.Execute(&output, tc)
