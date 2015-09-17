@@ -1,11 +1,11 @@
-package transform
+package main
 
 import (
 	"bytes"
 	"text/template"
 )
 
-const svgSpriteTemplate = "../../svgSpriteTemplate.svg"
+const svgSpriteTemplate = "./svgSpriteTemplate.svg"
 
 func openTemplate() *template.Template {
 	tmpl, err := template.New("svgSpriteTemplate").ParseFiles(svgSpriteTemplate)
