@@ -8,11 +8,7 @@ import (
 const svgSpriteTemplate = "./svgSpriteTemplate.svg"
 
 func openTemplate() *template.Template {
-	tmpl, err := template.New("svgSpriteTemplate").ParseFiles(svgSpriteTemplate)
-
-	if err != nil {
-		panic(err)
-	}
+	tmpl, _ := template.New("svgSpriteTemplate").ParseFiles(svgSpriteTemplate)
 
 	return tmpl
 }

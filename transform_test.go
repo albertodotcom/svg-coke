@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/textproto"
+	"reflect"
 	"text/template"
 
 	. "github.com/onsi/ginkgo"
@@ -9,6 +10,16 @@ import (
 )
 
 var _ = Describe("Transform", func() {
+	Describe("#openTemplate", func() {
+		It("returns a template", func() {
+			result := openTemplate()
+
+			expectedType := "*template.Template"
+
+			Expect(reflect.TypeOf(result).String()).To(Equal(expectedType))
+		})
+	})
+
 	Describe("#injectIconsIntoSvgTemplate ", func() {
 		It("injects icons into a template", func() {
 			const svgTemplateContainer = `
