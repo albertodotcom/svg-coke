@@ -1,51 +1,37 @@
 package main
 
 import (
-	"log"
 	"net/textproto"
-	"reflect"
-	"testing"
 	"text/template"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-func TestOpenTemplate(t *testing.T) {
-	result := openTemplate()
+var _ = Describe("Transform", func() {
+	Describe("#injectIconsIntoSvgTemplate ", func() {
+		It("injects icons into a template", func() {
+			const svgTemplateContainer = `
+		  <svg>
+		    <defs>
+		      {{.Icons}}
+		    <defs>
+		  </svg>`
 
-	expectedType := "*template.Template"
+			stringToBeInjected := `<symbol id="hello"></symbol>`
 
-	if reflect.TypeOf(result).String() != expectedType {
-		t.Logf("expected result to be of type \"%s\", but found type \"%s\"", expectedType, reflect.TypeOf(result))
-		t.Fail()
-	}
-}
+			tmpl, _ := template.New("svgSpriteTemplate").Parse(textproto.TrimString(svgTemplateContainer))
 
-func TestInjectIconIntoTemaple(t *testing.T) {
-	log.Println("hello")
+			resultByte := injectIconsIntoSvgTemplate(stringToBeInjected, tmpl)
+			result := resultByte.String()
 
-	const svgTemplateContainer = `
-  <svg>
-    <defs>
-      {{.Icons}}
-    <defs>
-  </svg>`
+			expectedResult := `<svg>
+		    <defs>
+		      <symbol id="hello"></symbol>
+		    <defs>
+		  </svg>`
 
-	stringToBeInjected := `<symbol id="hello"></symbol>`
-
-	tmpl, _ := template.New("svgSpriteTemplate").Parse(textproto.TrimString(svgTemplateContainer))
-
-	resultByte := injectIconsIntoSvgTemplate(stringToBeInjected, tmpl)
-	result := resultByte.String()
-
-	log.Printf("result: %#+v\n", result)
-
-	expectedResult := `<svg>
-    <defs>
-      <symbol id="hello"></symbol>
-    <defs>
-  </svg>`
-
-	if result != expectedResult {
-		t.Logf("expected \"%s\" to be equal to \"%s\"", result, expectedResult)
-		t.Fail()
-	}
-}
+			Expect(result).To(Equal(expectedResult))
+		})
+	})
+})
