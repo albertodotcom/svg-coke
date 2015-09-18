@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"io/ioutil"
 	"net/textproto"
 	"reflect"
@@ -13,6 +14,26 @@ import (
 )
 
 var _ = Describe("Transform", func() {
+	Describe("#check", func() {
+		It("panics when e is not nil", func() {
+			e := errors.New("emit macho dwarf: elf header corrupted")
+
+			result := func() {
+				check(e)
+			}
+
+			Expect(result).To(Panic())
+		})
+
+		It("doesn't panic when e isn't defined", func() {
+			result := func() {
+				check(nil)
+			}
+
+			Expect(result).NotTo(Panic())
+		})
+	})
+
 	Describe("#openTemplate", func() {
 		It("returns a template", func() {
 			result := openTemplate()

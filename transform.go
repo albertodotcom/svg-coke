@@ -15,9 +15,18 @@ import (
 
 const svgSpriteTemplate = "./svgSpriteTemplate.svg"
 
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
+
 func openTemplate() *template.Template {
-	dat, _ := ioutil.ReadFile(svgSpriteTemplate)
-	tmpl, _ := template.New("svgSpriteTemplate").Parse(string(dat))
+	dat, err := ioutil.ReadFile(svgSpriteTemplate)
+	check(err)
+
+	tmpl, err := template.New("svgSpriteTemplate").Parse(string(dat))
+	check(err)
 
 	return tmpl
 }
@@ -50,7 +59,8 @@ func fetchIcons(srcFolder string) []string {
 		panic(fmt.Sprintf("'%s' folder doesn't exist", srcFolder))
 	}
 
-	files, _ := ioutil.ReadDir(srcFolder)
+	files, err := ioutil.ReadDir(srcFolder)
+	check(err)
 
 	var svgFiles []string
 	for _, file := range files {
@@ -65,9 +75,7 @@ func fetchIcons(srcFolder string) []string {
 func getSvg(svgBytes []byte) string {
 	svg := bytes.NewReader(svgBytes)
 	doc, err := goquery.Parse(svg)
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 
 	icon := doc.Find("symbol").OuterHtml()
 
@@ -83,7 +91,8 @@ func extractSvgContent(files []string) string {
 
 	for _, file := range files {
 
-		dat, _ := ioutil.ReadFile(file)
+		dat, err := ioutil.ReadFile(file)
+		check(err)
 
 		svgIcons = svgIcons + "\n" + getSvg(dat)
 	}
