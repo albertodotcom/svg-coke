@@ -16,12 +16,13 @@ import (
 const svgSpriteTemplate = "./svgSpriteTemplate.svg"
 
 func openTemplate() *template.Template {
-	tmpl, _ := template.New("svgSpriteTemplate").ParseFiles(svgSpriteTemplate)
+	dat, _ := ioutil.ReadFile(svgSpriteTemplate)
+	tmpl, _ := template.New("svgSpriteTemplate").Parse(string(dat))
 
 	return tmpl
 }
 
-func injectIconsIntoSvgTemplate(icons string, tmpl *template.Template) bytes.Buffer {
+func injectIconsIntoSvgTemplate(icons string, tmpl *template.Template) []byte {
 	tc := struct {
 		Icons string
 	}{
@@ -29,9 +30,10 @@ func injectIconsIntoSvgTemplate(icons string, tmpl *template.Template) bytes.Buf
 	}
 
 	var output bytes.Buffer
+
 	tmpl.Execute(&output, tc)
 
-	return output
+	return output.Bytes()
 }
 
 func exists(path string) bool {

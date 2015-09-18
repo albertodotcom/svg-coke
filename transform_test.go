@@ -37,7 +37,7 @@ var _ = Describe("Transform", func() {
 			tmpl, _ := template.New("svgSpriteTemplate").Parse(textproto.TrimString(svgTemplateContainer))
 
 			resultByte := injectIconsIntoSvgTemplate(stringToBeInjected, tmpl)
-			result := resultByte.String()
+			result := string(resultByte)
 
 			expectedResult := `<svg>
 		    <defs>
