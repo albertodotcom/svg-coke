@@ -69,6 +69,10 @@ func getSvg(svgBytes []byte) string {
 
 	icon := doc.Find("symbol").OuterHtml()
 
+	if icon == "" {
+		panic("I haven't found any <symbol> in the svg")
+	}
+
 	return icon
 }
 

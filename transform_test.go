@@ -1,9 +1,11 @@
 package main
 
 import (
+	"io/ioutil"
 	"net/textproto"
 	"reflect"
 	"regexp"
+	"strings"
 	"text/template"
 
 	. "github.com/onsi/ginkgo"
@@ -73,9 +75,48 @@ var _ = Describe("Transform", func() {
 		})
 	})
 
+	Describe("#getSvg ", func() {
+		It("returns the symbol out of an svg", func() {
+			var expectedResult = `
+			<symbol id="icon-1" viewBox="0 0 1024 1024">
+				<title>icon 1</title>
+				<path class="path1" d="M512 32l-512 512 96 96 96-96v416h256v-192h128v192h256v-416l96 96 96-96-512-512zM512 448c-35.346 0-64-28.654-64-64s28.654-64 64-64c35.346 0 64 28.654 64 64s-28.654 64-64 64z"></path>
+			</symbol>`
+
+			files := fetchIcons("./test-assets")
+
+			reg, _ := regexp.Compile("[\\s\t\n]")
+
+			fileBytes, _ := ioutil.ReadFile(files[0])
+
+			result := getSvg(fileBytes)
+
+			Expect(reg.ReplaceAllString(result, "")).To(Equal(reg.ReplaceAllString(expectedResult, "")))
+		})
+
+		It("returns an error if the svg doesn't have a symbol element", func() {
+			files := fetchIcons("./test-assets")
+
+			fileBytes, _ := ioutil.ReadFile(files[0])
+
+			fileString := string(fileBytes)
+
+			fileString = strings.Replace(fileString, "symbol", "g", -1)
+
+			fileBytes = []byte(fileString)
+
+			expect := func() {
+				getSvg(fileBytes)
+			}
+
+			Expect(expect).To(Panic())
+		})
+	})
+
 	Describe("#extractSvgContent ", func() {
 		It("returns the expected content", func() {
-			var expectedResult = `<symbol id="icon-1" viewBox="0 0 1024 1024">
+			var expectedResult = `
+			<symbol id="icon-1" viewBox="0 0 1024 1024">
 				<title>icon 1</title>
 				<path class="path1" d="M512 32l-512 512 96 96 96-96v416h256v-192h128v192h256v-416l96 96 96-96-512-512zM512 448c-35.346 0-64-28.654-64-64s28.654-64 64-64c35.346 0 64 28.654 64 64s-28.654 64-64 64z"></path>
 			</symbol>
