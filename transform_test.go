@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/textproto"
+	"os"
 	"reflect"
 	"regexp"
 	"strings"
@@ -161,6 +162,62 @@ var _ = Describe("Transform", func() {
 			result := extractSvgContent(files)
 
 			Expect(reg.ReplaceAllString(result, "")).To(Equal(reg.ReplaceAllString(expectedResult, "")))
+		})
+	})
+
+	Describe("#getFolderPath ", func() {
+		It("panics if args isn't 3", func() {
+			os.Args[4] = "four"
+			expect := func() {
+				getFolderPath()
+			}
+
+			origExit := exit
+			exit = mockExit
+			defer func() { exit = origExit }()
+
+			Expect(expect).To(Panic())
+
+			os.Args = append(os.Args[:0], os.Args[1])
+
+			Expect(expect).To(Panic())
+		})
+
+		It("returns 2 strings ./test-assets ./test-assets", func() {
+			os.Args = append(os.Args[:0], "ignore", "./test-assets", "./test-assets")
+
+			first, second := getFolderPath()
+
+			Expect(first).To(Equal("./test-assets"))
+			Expect(second).To(Equal("./test-assets"))
+		})
+
+		It("exits if src folder doesn't exit", func() {
+			os.Args = append(os.Args[:0], "ignore", "./doesntExist", "./test-assets")
+
+			origExit := exit
+			exit = mockExit
+			defer func() { exit = origExit }()
+
+			expect := func() {
+				getFolderPath()
+			}
+
+			Expect(expect).To(Panic())
+		})
+
+		It("exits if dest folder doesn't exit", func() {
+			os.Args = append(os.Args[:0], "ignore", "./test-assets", "./doesntExist")
+
+			origExit := exit
+			exit = mockExit
+			defer func() { exit = origExit }()
+
+			expect := func() {
+				getFolderPath()
+			}
+
+			Expect(expect).To(Panic())
 		})
 	})
 })
