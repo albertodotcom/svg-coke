@@ -167,7 +167,7 @@ var _ = Describe("Transform", func() {
 
 	Describe("#getFolderPath ", func() {
 		It("panics if args isn't 3", func() {
-			os.Args[4] = "four"
+			os.Args = append(os.Args[:0], "ignore", "./test-assets", "./test-assets", "four")
 			expect := func() {
 				getFolderPath()
 			}
@@ -178,7 +178,7 @@ var _ = Describe("Transform", func() {
 
 			Expect(expect).To(Panic())
 
-			os.Args = append(os.Args[:0], os.Args[1])
+			os.Args = append(os.Args[:0], "one")
 
 			Expect(expect).To(Panic())
 		})
