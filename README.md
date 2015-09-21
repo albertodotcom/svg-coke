@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/albertodotcom/svg-coke.svg?branch=master)](https://travis-ci.org/albertodotcom/svg-coke)
+
 ## Useful resources
 [css-tricks](https://css-tricks.com/svg-sprites-use-better-icon-fonts/)
 
