@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 	"strings"
@@ -19,6 +18,19 @@ func check(e error) {
 	if e != nil {
 		panic(e)
 	}
+}
+
+var exit = _exit
+
+func _exit() {
+	os.Exit(1)
+}
+
+func logAndExit(message string) {
+	fmt.Println("######")
+	fmt.Println(message)
+	fmt.Println("######")
+	exit()
 }
 
 func openTemplate() *template.Template {
@@ -80,7 +92,7 @@ func getSvg(svgBytes []byte) string {
 	icon := doc.Find("symbol").OuterHtml()
 
 	if icon == "" {
-		panic("I haven't found any <symbol> in the svg")
+		logAndExit("I haven't found any <symbol> in the svg")
 	}
 
 	return icon
@@ -102,17 +114,17 @@ func extractSvgContent(files []string) string {
 
 func getFolderPath() (string, string) {
 	if len(os.Args) != 3 {
-		panic("you must pass a src folder path and a dest one")
+		logAndExit("You must pass a source folder path and a destination one")
 	}
 
 	folders := os.Args[1:len(os.Args)]
 
 	if !exists(folders[0]) {
-		panic(fmt.Sprintf("the source folder '%s' doesn't exist", folders[0]))
+		logAndExit(fmt.Sprintf("The source folder '%s' doesn't exist", folders[0]))
 	}
 
 	if !exists(folders[1]) {
-		panic(fmt.Sprintf("the destination folder '%s' doesn't exist", folders[1]))
+		logAndExit(fmt.Sprintf("The destination folder '%s' doesn't exist", folders[1]))
 	}
 
 	return os.Args[1], os.Args[2]
@@ -123,11 +135,28 @@ func removeFile(fileName string) {
 }
 
 func main() {
+	fmt.Print(`
+Welcome to Svg-Coke - A small terminal app for creating svg sprites
+            ___
+          .!...!.
+           !   !
+           ;   :
+          ;     :
+         ;_______:
+         !svgcoke!
+         !_______!
+         :       :
+         :       :
+          ;     ;
+         :       :
+          '''''''
+`)
+
 	// get srcFolder and destFolder from cli
 	srcFolder, destFolder := getFolderPath()
 
-	log.Printf("The source folder is : '%s'", srcFolder)
-	log.Printf("The destination folder is: '%s'", destFolder)
+	fmt.Printf("The source folder is : '%s'\n", srcFolder)
+	fmt.Printf("The destination folder is: '%s'\n", destFolder)
 
 	// create the svg output file and delete the previous one
 	outFileName := path.Join(destFolder, "result.svg")
@@ -135,8 +164,6 @@ func main() {
 
 	// retrieve the icons from the src folder
 	fileNames := fetchIcons(srcFolder)
-
-	log.Printf("fileNames: %#+v\n", fileNames)
 
 	// extract the svgContent
 	svgIcons := extractSvgContent(fileNames)
@@ -147,7 +174,6 @@ func main() {
 	// inject icons into svg Template
 	svgFileOutput := injectIconsIntoSvgTemplate(svgIcons, tmpl)
 
-	log.Printf("svgFileOutput: '%s'", string(svgFileOutput))
-
 	ioutil.WriteFile(outFileName, svgFileOutput, 0644)
+	fmt.Println("Done!")
 }

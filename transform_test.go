@@ -13,6 +13,10 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+func mockExit() {
+	panic("exit")
+}
+
 var _ = Describe("Transform", func() {
 	Describe("#check", func() {
 		It("panics when e is not nil", func() {
@@ -129,6 +133,10 @@ var _ = Describe("Transform", func() {
 			expect := func() {
 				getSvg(fileBytes)
 			}
+
+			origExit := exit
+			exit = mockExit
+			defer func() { exit = origExit }()
 
 			Expect(expect).To(Panic())
 		})
